@@ -34,6 +34,22 @@ git rev-parse --is-inside-work-tree >/dev/null 2>&1 || die "not inside a git wor
 [ -s "$PATCH" ] || die "patch file missing or empty: $PATCH"
 git apply --stat "$PATCH" >/dev/null 2>&1 || die "patch file is not a valid git patch: $PATCH"
 
+# Package identity is deliberately managed outside the source patch: upstream
+# changes APP_VERSION_* frequently, so a Gradle-properties hunk would go stale.
+ensure_package_identity() {
+  local count
+  count="$(grep -c '^APP_PACKAGE=' gradle.properties || true)"
+  [ "$count" -eq 1 ] || die "expected exactly one APP_PACKAGE entry in gradle.properties (found ${count:-0})"
+  if [ "$CHECK_ONLY" -eq 1 ]; then
+    echo "apply-patch: APP_PACKAGE entry found (check-only; no files changed)."
+  else
+    sed -i 's/^APP_PACKAGE=.*/APP_PACKAGE=org.saimum.messenger/' gradle.properties \
+      || die "could not set APP_PACKAGE in gradle.properties"
+    grep -qx 'APP_PACKAGE=org.saimum.messenger' gradle.properties \
+      || die "APP_PACKAGE verification failed"
+  fi
+}
+
 prop() { [ -f custom/version.properties ] && grep -E "^$1=" custom/version.properties | tail -n1 | cut -d= -f2- | tr -d '\r'; }
 
 # Which custom change lives in which file (used only for the report).
@@ -52,6 +68,7 @@ describe_file() {
 
 # 1. Already applied?  (every hunk present => reverse check passes)
 if git apply --reverse --check "$PATCH" >/dev/null 2>&1; then
+  ensure_package_identity
   echo "apply-patch: custom patch is already applied - nothing to do."
   exit 0
 fi
@@ -59,10 +76,12 @@ fi
 # 2. Forward check
 if CHECK_OUT="$(git apply --check --verbose "$PATCH" 2>&1)"; then
   if [ "$CHECK_ONLY" -eq 1 ]; then
+    ensure_package_identity
     echo "apply-patch: check OK - patch applies cleanly."
     exit 0
   fi
   git apply --verbose "$PATCH" || die "git apply failed unexpectedly after a successful check"
+  ensure_package_identity
   git apply --reverse --check "$PATCH" >/dev/null 2>&1 || die "post-apply verification failed (patch not fully present)"
   echo "apply-patch: patch applied and verified."
   exit 0
@@ -72,6 +91,7 @@ fi
 # This is common when the upstream Telegram source has moved since the patch was generated.
 if CHECK_OUT_3WAY="$(git apply --3way --check --verbose "$PATCH" 2>&1)"; then
   if [ "$CHECK_ONLY" -eq 1 ]; then
+    ensure_package_identity
     echo "apply-patch: check OK via 3-way merge - patch applies cleanly."
     exit 0
   fi
