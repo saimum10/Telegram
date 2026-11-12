@@ -1118,20 +1118,6 @@ index 9e9962e..a3972a6 100644
 \ No newline at end of file
 +    android:accountType="org.saimum.messenger"/>
 \ No newline at end of file
-diff --git a/gradle.properties b/gradle.properties
-index 574e3b8..0e9fbcf 100644
---- a/gradle.properties
-+++ b/gradle.properties
-@@ -15,7 +15,7 @@
- #Sat Mar 12 05:53:50 MSK 2016
- APP_VERSION_CODE=7291
- APP_VERSION_NAME=13.2.1
--APP_PACKAGE=org.telegram.messenger
-+APP_PACKAGE=org.saimum.messenger
- IS_PRIVATE=false
- RELEASE_KEY_PASSWORD=android
- RELEASE_KEY_ALIAS=androidkey
-
 diff --git a/TMessagesProj/src/main/res/values/strings.xml b/TMessagesProj/src/main/res/values/strings.xml
 --- a/TMessagesProj/src/main/res/values/strings.xml
 +++ b/TMessagesProj/src/main/res/values/strings.xml
