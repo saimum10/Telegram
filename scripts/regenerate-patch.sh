@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Regenerates the single MyGram patch from the working-tree customizations.
 # Includes custom Java logic, app identity/branding, manifest, XML resources,
-# and Gradle package configuration. Run only after resolving conflicts.
+# and XML resources. APP_PACKAGE is managed separately by apply-patch.sh so upstream version bumps cannot stale the patch.
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -28,7 +28,6 @@ PATHS=(
   TMessagesProj/src/main/res/xml/shortcuts.xml
   TMessagesProj/src/main/res/xml/sync_contacts.xml
   TMessagesProj/src/main/res/values/strings.xml
-  gradle.properties
 )
 
 git rev-parse --is-inside-work-tree >/dev/null 2>&1 || { echo "not inside a git work tree" >&2; exit 1; }

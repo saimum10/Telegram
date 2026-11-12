@@ -12,7 +12,7 @@ Feature design and limits: [`docs/DESIGN.md`](docs/DESIGN.md).
 | `custom/version.properties` | Custom version name/code, patch version, upstream version + commit |
 | `custom/CHANGELOG.md` | Source of the release notes (one `## [X.Y.Z]` section per release) |
 | `tg-icon.png` (repo root, you provide) | Source of the launcher icon, never modified by any script |
-| `scripts/apply-patch.sh` | Apply / check the patch; on conflict writes `build-reports/patch-conflict-report.md` and stops |
+| `scripts/apply-patch.sh` | Apply / check the patch and set only `APP_PACKAGE` in `gradle.properties`; on conflict writes `build-reports/patch-conflict-report.md` and stops |
 | `scripts/regenerate-patch.sh` | Rebuild the patch after you resolved a conflict |
 | `scripts/apply-icon.sh` (+ `icon_gen.py`) | Generate and install all icon resources into the build workspace |
 | `scripts/apply-buildvars.sh` | Inject **your** `api_id` / `api_hash` (secrets) into `BuildVars.java` |
@@ -24,7 +24,7 @@ Feature design and limits: [`docs/DESIGN.md`](docs/DESIGN.md).
 | `.github/workflows/build-release.yml` | Validate → build → verify → artifacts → (optional) GitHub Release |
 | `.github/workflows/sync-upstream.yml` | Weekly/manual upstream sync, opens a PR |
 
-The custom feature and MyGram package patches are applied **in the CI workspace only**; your fork branch stays upstream source plus patch files, scripts, and workflows.
+The custom feature and MyGram branding patches are applied **in the CI workspace only**. The package ID is set separately by changing only `APP_PACKAGE`, preserving upstream version and Gradle settings; your fork branch stays upstream source plus patch files, scripts, and workflows.
 That is why syncing with upstream never conflicts with your features, and a real conflict shows up as a clear patch report.
 
 ## One-time setup
