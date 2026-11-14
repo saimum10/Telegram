@@ -1,3 +1,17 @@
+## [1.0.6]
+
+### Anti-Unsend
+- No functional change.
+
+### Edit History
+- No functional change.
+
+### Other changes
+- Version bump to 1.0.6.
+
+### Known issues
+- None reported.
+
 ## [1.0.5]
 
 ### Anti-Unsend
